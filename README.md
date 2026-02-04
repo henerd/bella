@@ -1,0 +1,135 @@
+# Bella – Autonomous AI Agent Architecture
+
+> Cron-based autonomous AI agent with decision making, interaction control, and cost-optimized LLM usage.
+
+Bella는 커뮤니티 환경에서 **자율적으로 관찰·판단·행동**하는 AI 에이전트를 목표로 설계된 프로젝트입니다.
+단순한 챗봇이 아니라, **주기적 스케줄링 · 상태 관리 · 행동 제약 · 비용 통제**를 포함한
+“실제 운영 가능한 자율 에이전트 아키텍처”를 실험하고 정리하는 데 초점을 두었습니다.
+
+---
+
+## ✨ 핵심 특징
+
+- **Cron 기반 자율 동작**
+  - 게시글 스캔, 판단, 반응, 토론 참여를 주기적으로 수행
+- **행동 결정 분리 설계**
+  - 관찰 → 판단(judge) → 행동(post / comment / vote / ignore)
+- **상태 기반 안전장치**
+  - 자기 글 상호작용 방지
+  - 댓글/글 레이트 리밋
+  - Arena PROPOSE 하루 1회 제한
+- **비용 최적화**
+  - 판단 로직 경량화
+  - 배치 처리로 LLM 호출 횟수 감소
+  - 불필요한 요청 차단
+- **운영 데이터 분리**
+  - runtime state / memory / logs는 코드에서 분리
+  - 포트폴리오용 코드만 공개
+
+---
+
+## 🧠 아키텍처 개요
+
+```
+[ Cron Scheduler ]
+        |
+        v
+[ Fetch / Observe ]
+        |
+        v
+[ Judge / Score ]
+        |
+        v
+[ Action Decision ]
+   |     |     |
+  Vote  Comment  Post
+```
+
+- 모든 행동은 **확률 + 상태 + 쿨다운**을 통과해야 실행
+- Arena(Propose / Battle)는 일반 행동과 분리된 독립 루프 사용
+
+---
+
+## ⏱ 주요 루프 구성
+
+### 1. Board Scan Loop
+- 신규 게시글 관찰
+- 여론/자극도(provocation) 점수 계산
+- 행동 결정 (up / down / comment / ignore)
+
+### 2. Reply Loop
+- 내가 작성한 글의 댓글 감시
+- 중복·자가응답 차단
+- 레이트 리밋 고려 후 대댓글 작성
+
+### 3. Arena Loop
+- PROPOSE: 하루 1회 제한
+- BATTLE: 상황에 따라 지속 참여
+- 업보트 수에 따라 쿨타임 동적 조절
+
+---
+
+## 🛡 안전장치 & 제약 설계
+
+- 자기 글 / 자기 댓글 상호작용 금지
+- 행동 쿨다운 (시간 기반)
+- 댓글 제한 감지 시 자동 후퇴
+- Arena 제안 스팸 방지 (daily guard)
+- 상태 마이그레이션 가드 적용
+
+---
+
+## 💰 비용 관리 전략
+
+- 판단 로직 경량화
+- batch 처리로 토큰 사용량 절감
+- 불필요한 LLM 호출 사전 차단
+
+> 실제 운영 기준  
+> **24시간 약 40만 토큰 사용 → 월 수천 원 수준**
+
+---
+
+## 📁 프로젝트 구조
+
+```
+.
+├─ index.js              # 메인 에이전트 로직
+├─ arena.md              # Arena 설계 및 규칙
+├─ guide.md              # 동작 흐름 설명
+├─ skills.md             # 에이전트 기능 정의
+├─ persona.txt           # 성향/캐릭터 정의
+├─ internal_rules.txt    # 내부 판단 규칙
+├─ config.json           # 설정 파일
+├─ README.md
+├─ .gitignore
+└─ package.json
+```
+
+> ⚠️ runtime state / logs / secrets는 의도적으로 제외됨
+
+---
+
+## 🧪 이 프로젝트에서 얻은 것
+
+- 장시간 동작하는 에이전트의 **상태 관리 중요성**
+- LLM 사용 시 **비용 통제 설계의 필요성**
+- 단순 프롬프트보다 **시스템 설계가 더 중요함**
+- “사람처럼 보이는 행동”은 확률과 제약의 조합이라는 점
+
+---
+
+## 🔮 향후 개선 아이디어
+
+- judge 로직 로컬 LLM 분리
+- 행동 결과 피드백 기반 강화학습 흉내
+- 시각화 대시보드 추가
+- 멀티 에이전트 실험
+
+---
+
+## 📌 주의
+
+이 저장소는 **아키텍처와 설계 중심 포트폴리오용**입니다.
+실제 운영에 사용되는 상태 데이터, 인증 정보, 로그는 포함되어 있지 않습니다.
+
