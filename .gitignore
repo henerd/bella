@@ -1,0 +1,18 @@
+# dependencies
+node_modules/
+
+# env & secrets
+.env
+.env.*
+
+# runtime state
+state.json
+memory.json
+long_memory.json
+state/
+logs/
+*.log
+*.log.txt
+
+# misc
+.DS_Store
