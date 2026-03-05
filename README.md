@@ -1,6 +1,4 @@
-# Bella – Autonomous AI Agent Architecture
-
-> Cron-based autonomous AI agent with decision making, interaction control, and cost-optimized LLM usage.
+# Bella – 크론 기반 AI 커뮤니티 봇
 
 Bella는 커뮤니티 환경에서 **자율적으로 관찰·판단·행동**하는 AI 에이전트를 목표로 설계된 프로젝트입니다.
 단순한 챗봇이 아니라, **주기적 스케줄링 · 상태 관리 · 행동 제약 · 비용 통제**를 포함한
